@@ -4,8 +4,11 @@ package org.usfirst.frc.team115.robot;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.RobotDrive;
-
 import edu.wpi.first.wpilibj.AnalogInput;
+
+import java.net.SocketException;
+
+import org.usfirst.frc.team115.subsystems.UDP;
 
 /**
  * This is a sample program demonstrating how to use an ultrasonic sensor and proportional 
@@ -28,6 +31,8 @@ public class Robot extends IterativeRobot {
 	private AnalogInput ultrasonicLeft;
 	private AnalogInput ultrasonicRight;
 
+	private UDP net;
+	
 	private static final double ANALOG_SCALE_5V = 0.009766;
     
     public Robot() {
@@ -37,6 +42,9 @@ public class Robot extends IterativeRobot {
 		//ultrasonicLeft = new AnalogInput(INPUT_LEFT);
 		//ultrasonicRight = new AnalogInput(INPUT_RIGHT);
 		
+		// 10.20.89.65 is the IP address of the other side
+		net = new UDP("10.20.89.65", 8888);
+		
     	autonomous();
     }
 
@@ -45,6 +53,8 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Ultrasonic [" + INPUT_BACK + "]", getBackUltrasonicInches());
 		//SmartDashboard.putNumber("Ultrasonic [" + INPUT_LEFT + "]", getLeftUltrasonicInches());
 		//SmartDashboard.putNumber("Ultrasonic [" + INPUT_RIGHT + "]", getRightUltrasonicInches());
+		
+		SmartDashboard.putString("Received: ", net.receive());
 	}
     
     /**
@@ -105,6 +115,22 @@ public class Robot extends IterativeRobot {
      */
 	@Override
     public void teleopPeriodic() {
-		log();
+		//log();
+		sendData();
+		receiveData();
     }
+	
+	public void sendData()
+	{
+		for (int i = 0; i < 10; i++)
+		{
+			net.send("test" + (i + 10));
+			SmartDashboard.putString("Status: ", "Sending");
+		}
+	}
+	
+	public void receiveData()
+	{
+		log();
+	}
 }
