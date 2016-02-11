@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.Servo;
 
 import java.net.SocketException;
 
@@ -31,30 +33,37 @@ public class Robot extends IterativeRobot {
 	private AnalogInput ultrasonicLeft;
 	private AnalogInput ultrasonicRight;
 
+	private Servo cameraServo;
+	//private CANTalon motor;
 	private UDP net;
 	
-	private static final double ANALOG_SCALE_5V = 0.009766;
+	private static final double ANALOG_SCALE_5V = 0.009766; // 5V / 512
     
     public Robot() {
     	
     	//ultrasonicFront = new AnalogInput(INPUT_FRONT);
-		ultrasonicBack = new AnalogInput(INPUT_BACK);
+		//ultrasonicBack = new AnalogInput(INPUT_BACK);
 		//ultrasonicLeft = new AnalogInput(INPUT_LEFT);
 		//ultrasonicRight = new AnalogInput(INPUT_RIGHT);
+		
+		//motor = new CANTalon(2);
+		cameraServo = new Servo(0);
 		
 		// 10.20.89.65 is the IP address of the other side
 		net = new UDP("10.20.89.65", 8888);
 		
-    	autonomous();
+    	//autonomous();
     }
 
     public void log() {
 		//SmartDashboard.putNumber("Ultrasonic [" + INPUT_FRONT + "]", getFrontUltrasonicInches());
-		SmartDashboard.putNumber("Ultrasonic [" + INPUT_BACK + "]", getBackUltrasonicInches());
+		//SmartDashboard.putNumber("Ultrasonic [" + INPUT_BACK + "]", getBackUltrasonicInches());
 		//SmartDashboard.putNumber("Ultrasonic [" + INPUT_LEFT + "]", getLeftUltrasonicInches());
 		//SmartDashboard.putNumber("Ultrasonic [" + INPUT_RIGHT + "]", getRightUltrasonicInches());
 		
 		SmartDashboard.putString("Received: ", net.receive());
+		
+		SmartDashboard.putNumber("Servo Angle: ", cameraServo.getAngle());
 	}
     
     /**
@@ -115,9 +124,10 @@ public class Robot extends IterativeRobot {
      */
 	@Override
     public void teleopPeriodic() {
-		//log();
-		sendData();
-		receiveData();
+		log();
+		//sendData();
+		//receiveData();
+		cameraServo.setAngle(30.0);
     }
 	
 	public void sendData()
@@ -132,5 +142,6 @@ public class Robot extends IterativeRobot {
 	public void receiveData()
 	{
 		log();
+		SmartDashboard.putString("Status: ", "Receiving");
 	}
 }
