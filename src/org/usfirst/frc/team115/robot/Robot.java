@@ -4,10 +4,13 @@ package org.usfirst.frc.team115.robot;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.AnalogInput;
 
 import java.net.SocketException;
 
+import org.usfirst.frc.team115.subsystems.CameraAngler;
 import org.usfirst.frc.team115.subsystems.UDP;
 
 /**
@@ -33,10 +36,11 @@ public class Robot extends IterativeRobot {
 
 	private UDP net;
 	
+	public static CameraAngler camAngler;
+	
 	private static final double ANALOG_SCALE_5V = 0.009766;
     
     public Robot() {
-    	
     	//ultrasonicFront = new AnalogInput(INPUT_FRONT);
 		ultrasonicBack = new AnalogInput(INPUT_BACK);
 		//ultrasonicLeft = new AnalogInput(INPUT_LEFT);
@@ -44,7 +48,7 @@ public class Robot extends IterativeRobot {
 		
 		// 10.20.89.65 is the IP address of the other side
 		net = new UDP("10.20.89.65", 8888);
-		
+		camAngler = new CameraAngler(); //TODO
     	autonomous();
     }
 
