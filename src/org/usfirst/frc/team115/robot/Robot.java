@@ -1,17 +1,13 @@
 
 package org.usfirst.frc.team115.robot;
 
-import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.RobotDrive;
-import edu.wpi.first.wpilibj.Servo;
-import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.AnalogInput;
-
-import java.net.SocketException;
-
-import org.usfirst.frc.team115.subsystems.CameraAngler;
 import org.usfirst.frc.team115.subsystems.UDP;
+
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * This is a sample program demonstrating how to use an ultrasonic sensor and proportional 
@@ -33,23 +29,26 @@ public class Robot extends IterativeRobot {
 	private AnalogInput ultrasonicBack;
 	private AnalogInput ultrasonicLeft;
 	private AnalogInput ultrasonicRight;
+	
+	public static Servo turnServo;
+	public static Servo vertServo;
 
 	private UDP net;
-	
-	public static CameraAngler camAngler;
 	
 	private static final double ANALOG_SCALE_5V = 0.009766;
     
     public Robot() {
-    	//ultrasonicFront = new AnalogInput(INPUT_FRONT);
+    	ultrasonicFront = new AnalogInput(INPUT_FRONT);
 		ultrasonicBack = new AnalogInput(INPUT_BACK);
-		//ultrasonicLeft = new AnalogInput(INPUT_LEFT);
-		//ultrasonicRight = new AnalogInput(INPUT_RIGHT);
+		ultrasonicLeft = new AnalogInput(INPUT_LEFT);
+		ultrasonicRight = new AnalogInput(INPUT_RIGHT);
+		
+		turnServo = new Servo(0);
+		vertServo = new Servo(1);
 		
 		// 10.20.89.65 is the IP address of the other side
 		net = new UDP("10.20.89.65", 8888);
-		camAngler = new CameraAngler(); //TODO
-    	autonomous();
+    	//autonomous();
     }
 
     public void log() {
@@ -64,9 +63,7 @@ public class Robot extends IterativeRobot {
     /**
      * Runs during autonomous.
      */
-    public void autonomous() {
-    	
-    }
+    public void autonomous() {}
     
     public double getFrontUltrasonicInches(){
 		//return ultrasonicFront.getVoltage()/ANALOG_SCALE_3_3V;
@@ -113,6 +110,38 @@ public class Robot extends IterativeRobot {
 	}
 	}
 	*/
+	public static void setServoAngles(double vertAngle, double turnAngle) {
+		vertServo.setAngle(vertAngle);
+		turnServo.setAngle(turnAngle);
+	}
+	
+	public static void setAngle(double vertAngle, double turnAngle) {
+		double vertPosition = (vertAngle/180) +  0.5;
+		double turnPosition = (turnAngle/180) + 0.5;
+		setServoPositions(vertPosition, turnPosition);
+	}
+	
+	public static void setAngleOffset(double vertAngle, double turnAngle) {
+		double vertPosition = vertServo.getPosition() + (vertAngle/180);
+		System.out.println(vertServo.getPosition() + ", " + (vertAngle/180));
+		double turnPosition = turnServo.getPosition() + (turnAngle/180);
+		setServoPositions(vertPosition, turnPosition);
+	}
+	
+	public static void setServoPositions(double vertPosition, double turnPosition) {
+		vertServo.setPosition(vertPosition);
+		turnServo.setPosition(turnPosition);
+	}
+	
+	public static void getAngles() {
+		System.out.println("The vertical servo's angle is " + vertServo.getAngle());
+		System.out.println("The turn servo's angle is " + turnServo.getAngle());
+	}
+	
+	@Override
+	public void teleopInit() {
+		setAngleOffset(-90.0, -15.0);
+	}
 
     /**
      * Runs during test mode
@@ -120,8 +149,8 @@ public class Robot extends IterativeRobot {
 	@Override
     public void teleopPeriodic() {
 		//log();
-		sendData();
-		receiveData();
+		//sendData();
+		//receiveData();
     }
 	
 	public void sendData()
