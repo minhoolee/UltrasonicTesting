@@ -49,10 +49,10 @@ public class UDP
 	}
 
 	public UDP() {}
-	public UDP(String host) { this(host, 8888, 6400); }
+	public UDP(String host) { this(host, 5810, 6400); }
 	public UDP(String host, int port) { this(host, port, 6400); }
 
-	public String receive()
+	public String getString()
 	{
 		String get = "";
 		try
@@ -68,6 +68,10 @@ public class UDP
 			e.printStackTrace();
 		}
 		return get.trim();
+	}
+	
+	public double getDouble() {
+		return Double.parseDouble(getString());
 	}
 
 	public void send(String str)
