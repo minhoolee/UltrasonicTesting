@@ -94,17 +94,21 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopInit() {
 		this.mysev.reset();
-		double loopTime = 1 / LOOPS_PER_SEC;
+		double loopTime = 1.0 / LOOPS_PER_SEC;
 		Timer time = new Timer();
 		
 		while (true) {
+			this.mysev.reset();
 			time.start();
 			sendData();
 			receiveData();
 			this.mysev.setAngleOffset(net.getDouble());
 			time.stop();
-			System.out.println(time.get());
-			Timer.delay(loopTime - time.get());
+			double timeElapsed = time.get();
+			if (timeElapsed < loopTime)
+				Timer.delay(loopTime - time.get());
+			else if (timeElapsed >= loopTime)
+				System.out.println("Error: " + timeElapsed + " seconds elapsed, FPS = " + (1 / timeElapsed));
 		}
 	}
 
@@ -113,19 +117,6 @@ public class Robot extends IterativeRobot {
      */
 	@Override
     public void teleopPeriodic() {
-		this.mysev.reset();
-		double loopTime = 1 / LOOPS_PER_SEC;
-		Timer time = new Timer();
-		
-		while (true) {
-			time.start();
-			//sendData();
-			receiveData();
-			this.mysev.setAngleOffset(net.getDouble());
-			time.stop();
-			System.out.println(time.get());
-			Timer.delay(loopTime - time.get());
-		}
 		//use = new UseServo(-90); // Final 0
 		//use.execute();
 		/*
