@@ -14,6 +14,7 @@ import java.net.InetAddress;
 public class UDP
 {
 	private String host;
+	private String dataString;
 	private int port;
 	private int DATAGRAM_LENGTH;
 
@@ -71,7 +72,12 @@ public class UDP
 	}
 	
 	public double getDouble() {
-		return Double.parseDouble(getString());
+		int ind = dataString.indexOf(" ");
+		if (ind == -1) 
+			dataString = getString();
+		String str = dataString.substring(0, ind);
+		dataString = dataString.substring(ind);
+		return Double.parseDouble(str);
 	}
 
 	public void send(String str)

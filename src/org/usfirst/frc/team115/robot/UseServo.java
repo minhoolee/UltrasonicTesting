@@ -1,42 +1,34 @@
 package org.usfirst.frc.team115.robot;
 
-import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class UseServo extends Command{
-	private final double THRESHOLD = 0.05;
-	private double actualFinalAngle;
-	private double angle;
+	private double vertAngle;
+	private double turnAngle;
 	
-	public UseServo(double angle) {
+	public UseServo(double vertAngle, double turnAngle) {
 		requires(Robot.mysev);
-		this.angle = angle;
+		this.vertAngle = vertAngle;
+		this.turnAngle = turnAngle;
 	}
 	
 	@Override
-	protected void initialize() {
-		Robot.mysev.reset();
-	}
+	protected void initialize() {}
 
 	@Override
 	protected void execute() { //execute runs over and over
-		Robot.mysev.setAngleOffset(this.angle);
+		Robot.mysev.setAngleOffset(this.vertAngle, this.turnAngle);
 	}
 	
 	@Override
-	protected boolean isFinished() { // everytime execute is run, isFinished checks if you are true or false.rue, then it stops the command
-		return Robot.mysev.getAngleLeft(this.angle) <= THRESHOLD; // returns if the angle is less than the threshold of where you are. If you are there, then returns true and the command stops running
+	protected boolean isFinished() { 
+		return true;
 	}
 
 	@Override
-	protected void end() {
-		Robot.mysev.reset();
-	}
+	protected void end() {}
 
 	@Override
-	protected void interrupted() {
-		end();
-	}
+	protected void interrupted() {}
 
 }

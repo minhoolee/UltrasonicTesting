@@ -51,6 +51,8 @@ public class Robot extends IterativeRobot {
 		// 10.1.15.6 is the IP address of the Jetson TK1
 		net = new UDP("10.1.15.7", 5810);
     }
+    
+    public void robotInit() {}
 
     public void log() {
 		//SmartDashboard.putNumber("Ultrasonic [" + INPUT_FRONT + "]", getFrontUltrasonicInches());
@@ -93,16 +95,14 @@ public class Robot extends IterativeRobot {
 	
 	@Override
 	public void teleopInit() {
-		this.mysev.reset();
+		//this.mysev.reset();
 		double loopTime = 1.0 / LOOPS_PER_SEC;
 		Timer time = new Timer();
-		
 		while (true) {
-			this.mysev.reset();
 			time.start();
 			sendData();
 			receiveData();
-			this.mysev.setAngleOffset(net.getDouble());
+			this.mysev.setAngleOffset(net.getDouble(), net.getDouble());//TODO need to add second parameter
 			time.stop();
 			double timeElapsed = time.get();
 			if (timeElapsed < loopTime)
@@ -117,31 +117,7 @@ public class Robot extends IterativeRobot {
      */
 	@Override
     public void teleopPeriodic() {
-		//use = new UseServo(-90); // Final 0
-		//use.execute();
-		/*
-		use = new UseServo(180);
-		use.execute();
-		use = new UseServo(-45); // Final 135
-		use.execute();
-		use = new UseServo(-135); // Final 0
-		use.execute();
-		use = new UseServo(45);
-		use.execute();
-		*/
-		//use.execute();
-		//angleToBeSent += 15;
-		/*
-		setAngleOffset(vertServo, 90);
-		setAngleOffset(vertServo, -90); // end at 0
-		setAngleOffset(vertServo, 45); // end at 45
-		reset(vertServo);
-		for (int i = 0; i < 180; i++)
-			setAngleOffset(vertServo, i); // end at 180
-		setAngleOffset(vertServo, -45); // end at 135
-		*/
-		//SmartDashboard.putNumber("Average bits ", anaencoder.getAverageVoltage());
-		//SmartDashboard.putNumber("Over sample", anaencoder.getOversampleBits());
+		Scheduler.getInstance().run();
 		//log();
     }
 	
